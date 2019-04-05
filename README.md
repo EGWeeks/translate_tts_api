@@ -14,11 +14,18 @@
 
 * Key
 	* Filename (No extension required)
-	
+
 * Text 
 	* The text to convert to translate and synthesis.
 
-#### Example Request
+#### Example POST Request
+Headers
+```javascript
+{
+	"Content-Type": "application/json"
+}
+```
+Body
 ```javascript
 {
 	"SourceLanguageCode": "en",
@@ -27,5 +34,12 @@
 	"VoiceId": "Miguel", 
 	"OutputFormat": "mp3",
 	"Key": "example"
+}
+
+```
+#### Example Response
+```javascript
+{
+    "url": "https://s3.amazonaws.com/bucket/example.mp3"
 }
 ```
