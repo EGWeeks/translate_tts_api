@@ -1,0 +1,43 @@
+service: translatetts
+package:
+  exclude:
+    - env.yml
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  environment: ${file(env.yml):${self:provider.stage}}
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - s3:PutObject
+        - s3:PutObjectAcl
+        - lambda:InvokeFunction
+        - polly:SynthesizeSpeech
+        - translate:TranslateText
+      Resource: '*'
+
+functions:
+  postTranslateTTS:
+    handler: index.postTranslateTTS
+    events:
+      - http:
+          path: translatetts
+          method: post
+          cors: true
+resources:
+  Resources:
+    audioBucket:
+      Type: AWS::S3::Bucket
+      DeletionPolicy: Retain
+      Properties:
+        AccessControl: PublicRead
+        BucketName: translatetts-audio-${self:provider.stage}
+custom:
+  prune:
+    automatic: true
+    number: 2
+
+plugins:
+  - serverless-prune-plugin
